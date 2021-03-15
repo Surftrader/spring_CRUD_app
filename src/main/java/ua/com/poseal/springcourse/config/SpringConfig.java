@@ -1,9 +1,11 @@
 package ua.com.poseal.springcourse.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
@@ -17,8 +19,27 @@ import javax.sql.DataSource;
 
 @Configuration
 @ComponentScan("ua.com.poseal.springcourse")
+@PropertySource(value = "classpath:db.properties")
 @EnableWebMvc
 public class SpringConfig implements WebMvcConfigurer {
+
+    @Value("${prefix}")
+    private String prefix;
+
+    @Value("${suffix}")
+    private String suffix;
+
+    @Value("${driver}")
+    private String driver;
+
+    @Value("${url}")
+    private String url;
+
+    @Value("${username}")
+    private String username;
+
+    @Value("${password}")
+    private String password;
 
     private final ApplicationContext applicationContext;
 
@@ -30,8 +51,8 @@ public class SpringConfig implements WebMvcConfigurer {
     public SpringResourceTemplateResolver templateResolver() {
         SpringResourceTemplateResolver templateResolver = new SpringResourceTemplateResolver();
         templateResolver.setApplicationContext(applicationContext);
-        templateResolver.setPrefix("/WEB-INF/views/");
-        templateResolver.setSuffix(".html");
+        templateResolver.setPrefix(prefix);
+        templateResolver.setSuffix(suffix);
         return templateResolver;
     }
 
@@ -53,11 +74,10 @@ public class SpringConfig implements WebMvcConfigurer {
     @Bean
     public DataSource dataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        // It`s better to save these fields in property file
-        dataSource.setDriverClassName("org.postgresql.Driver");
-        dataSource.setUrl("jdbc:postgresql://localhost:5432/first_db");
-        dataSource.setUsername("postgres");
-        dataSource.setPassword("root");
+        dataSource.setDriverClassName(driver);
+        dataSource.setUrl(url);
+        dataSource.setUsername(username);
+        dataSource.setPassword(password);
 
         return dataSource;
     }
